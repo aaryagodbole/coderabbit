@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# Central CodeRabbit config for every repo under aaryagodbole that has no
+# .coderabbit.yaml of its own. https://docs.coderabbit.ai/configuration/central-configuration
+language: "en-US"
+reviews:
+  profile: "assertive"
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!**/*.lock"
+    - "!**/uv.lock"
+    - "!**/package-lock.json"
+    - "!**/pnpm-lock.yaml"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/.next/**"
+    - "!**/*.min.js"
+    - "!**/*.ipynb"
+  path_instructions:
+    - path: "**/*.py"
+      instructions: |
+        - Flag missing type hints on public functions, broad `except`, and blocking I/O inside `async def`.
+        - Validate external input (API bodies, LLM output, tool arguments) with Pydantic or explicit checks.
+        - Never log secrets, API keys, tokens or raw user data.
+    - path: "**/*.{ts,tsx}"
+      instructions: |
+        - Flag `any`, unhandled promise rejections, and missing `useEffect` dependencies.
+        - Check UI for accessibility (labels, alt text, keyboard focus).
+    - path: "**/{agents,agent,graph,graphs,mcp,tools}/**"
+      instructions: |
+        - This is LLM agent / MCP tool code. Check that tool inputs are validated, tool side effects
+          (writes, deletes, network calls) are explicit, and loops have a stop condition.
+        - Flag prompts that let untrusted tool output be treated as instructions.
+    - path: "**/tests/**"
+      instructions: |
+        - Prefer behaviour tests over tests that only assert mocks were called.
